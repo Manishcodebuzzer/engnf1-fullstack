@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: triagesync-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: triagesync
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d triagesync']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Express Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: triagesync-backend
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 5001
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgrespassword@postgres:5432/triagesync?schema=public
+      CLIENT_URL: http://localhost:80
+      JWT_SECRET: production_jwt_secret_must_be_at_least_32_characters_long
+      JWT_EXPIRES_IN: 24h
+    ports:
+      - '5001:5001'
+
+  # React Frontend (Nginx SPA)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: triagesync-frontend
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      VITE_API_BASE_URL: http://localhost:5001/api
+    ports:
+      - '80:80'
+
+volumes:
+  postgres_data:

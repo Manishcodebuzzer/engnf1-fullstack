@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Environment variables
+.env
+.env.*
+*.env
+**/.env
+**/.env.*
+
+# Production build outputs
+dist/
+build/
+out/
+backend/dist/
+frontend/dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+*.log
+
+# Editor and OS
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.sublime-workspace
+
+# Coverage and testing
+coverage/
+*.lcov
+.nyc_output
+
+# Cache
+.cache/
+.parcel-cache/
+.turbo/
+
+# Temporary benchmark and test files
+test-*.ts
+benchmark-*.ts
+
+# Keep example environment files in Git
+!.env.example
+!**/.env.example
